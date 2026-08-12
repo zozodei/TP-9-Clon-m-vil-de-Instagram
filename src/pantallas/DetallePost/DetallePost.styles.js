@@ -4,7 +4,7 @@ import { colores } from '../../colores';
 export default StyleSheet.create({
   contenedor: {
     backgroundColor: colores.fondo,
-    paddingBottom: 24,
+    paddingBottom: 24, // espacio libre después del último comentario, para que no quede pegado al borde
   },
   centro: {
     flex: 1,
@@ -38,7 +38,7 @@ export default StyleSheet.create({
   },
   foto: {
     width: '100%',
-    aspectRatio: 1,
+    aspectRatio: 1, // igual que en PostCard: fuerza que la foto sea cuadrada
     backgroundColor: colores.superficie,
   },
   acciones: {

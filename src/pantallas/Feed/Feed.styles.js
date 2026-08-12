@@ -3,27 +3,27 @@ import { colores } from '../../colores';
 
 export default StyleSheet.create({
   contenedor: {
-    flex: 1,
+    flex: 1, // ocupa toda la pantalla disponible (sin esto, la lista podría quedar con alto 0)
     backgroundColor: colores.fondo,
   },
   centro: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: 'center', // centra el spinner verticalmente
+    alignItems: 'center', // y horizontalmente
     backgroundColor: colores.fondo,
   },
   header: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'space-between', // logo a la izquierda, iconos pegados a la derecha
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 10,
-    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomWidth: StyleSheet.hairlineWidth, // línea finita separando el header del feed
     borderBottomColor: colores.borde,
   },
   logo: {
     fontSize: 26,
-    fontStyle: 'italic',
+    fontStyle: 'italic', // el logo de Instagram real es en cursiva
     fontWeight: '700',
     color: colores.textoPrincipal,
   },
@@ -32,6 +32,6 @@ export default StyleSheet.create({
     alignItems: 'center',
   },
   headerIcono: {
-    marginRight: 16,
+    marginRight: 16, // separación entre el ícono de corazón y el de mensajes
   },
 });

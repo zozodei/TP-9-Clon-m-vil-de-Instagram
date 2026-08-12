@@ -1,15 +1,17 @@
-// datos fijos: no hay login, esto simula que ya hay un usuario logueado
-// (mismo criterio que usamos en el TP web, en dataDeUsuario.ts)
+// datos FIJOS (no vienen de ninguna API): simulan que ya hay un usuario logueado,
+// sin tener que armar pantallas de login/registro (la consigna lo pide así)
 export const usuarioLogueado = {
-  usuario: 'flecha_michis',
-  nombre: 'Flecha Michis 🐾',
-  fotoPerfil: 'https://cdn2.thecatapi.com/images/MTY3ODIyMQ.jpg',
+  usuario: 'flecha_michis', // el "@" que aparece en el perfil
+  nombre: 'Flecha Michis 🐾', // el nombre "de fantasía" arriba de la biografía
+  fotoPerfil: 'https://cdn2.thecatapi.com/images/MTY3ODIyMQ.jpg', // avatar del usuario logueado
+  // "\n" adentro del string es un salto de línea: la biografía se ve en dos renglones
   biografia: '🐾 Amante de los gatitos | Fotógrafo felino\nBuenos Aires, Argentina 🇦🇷',
-  seguidores: 847,
+  seguidores: 847, // número fijo, no cambia (no hay backend real de seguidores)
   seguidos: 123,
 };
 
-// las historias de arriba del feed, igual que en el TP web
+// array de historias que se muestran arriba del feed, en la BarraHistorias.
+// cada objeto tiene id (para el keyExtractor de la lista), foto y usuario
 export const historias = [
   { id: 1, fotoPerfil: 'https://loremflickr.com/600/600/kitten?lock=101', usuario: 'ManunuGatito1' },
   { id: 2, fotoPerfil: 'https://loremflickr.com/600/600/kitten?lock=102', usuario: 'ZoeeFotos_Gatitos' },

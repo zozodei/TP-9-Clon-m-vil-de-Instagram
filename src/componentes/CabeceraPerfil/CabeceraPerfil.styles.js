@@ -8,28 +8,28 @@ export default StyleSheet.create({
     paddingBottom: 16,
   },
   filaTop: {
-    flexDirection: 'row',
+    flexDirection: 'row', // avatar y stats uno al lado del otro
     alignItems: 'center',
     marginBottom: 12,
   },
   avatar: {
     width: 80,
     height: 80,
-    borderRadius: 40,
+    borderRadius: 40, // círculo
     marginRight: 20,
     backgroundColor: colores.superficie,
   },
   stats: {
-    flex: 1,
+    flex: 1, // ocupa todo el espacio que sobra al lado del avatar
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'space-around', // reparte las 3 métricas con espacio parejo entre ellas
   },
   stat: {
-    alignItems: 'center',
+    alignItems: 'center', // centra el número arriba de la palabra (publicaciones/seguidores/seguidos)
   },
   statNumero: {
     fontSize: 16,
-    fontWeight: '700',
+    fontWeight: '700', // bien grueso, para que resalte el número
     color: colores.textoPrincipal,
   },
   statLabel: {
@@ -45,15 +45,15 @@ export default StyleSheet.create({
   bio: {
     fontSize: 13,
     color: colores.textoPrincipal,
-    lineHeight: 18,
+    lineHeight: 18, // separación entre renglones (importante porque la bio tiene un salto de línea)
     marginBottom: 12,
   },
   botonEditar: {
     borderWidth: 1,
     borderColor: colores.borde,
-    borderRadius: 8,
+    borderRadius: 8, // bordes redondeados del botón
     paddingVertical: 6,
-    alignItems: 'center',
+    alignItems: 'center', // centra el texto "Editar perfil" adentro del botón
   },
   botonEditarTexto: {
     fontWeight: '600',

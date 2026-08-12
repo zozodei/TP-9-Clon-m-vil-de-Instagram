@@ -8,7 +8,7 @@ export default StyleSheet.create({
   },
   tabs: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'space-around', // reparte las 3 pestañas con espacio parejo
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: colores.borde,
     paddingVertical: 10,
@@ -16,13 +16,13 @@ export default StyleSheet.create({
   },
   tab: {
     fontSize: 11,
-    letterSpacing: 0.5,
+    letterSpacing: 0.5, // un poquito de separación entre letras, como en Instagram real
     color: colores.textoSecundario,
   },
   tabActivo: {
-    color: colores.textoPrincipal,
+    color: colores.textoPrincipal, // más oscuro que las pestañas inactivas
     fontWeight: '700',
-    borderBottomWidth: 1,
+    borderBottomWidth: 1, // la rayita de "seleccionado" debajo del texto
     borderBottomColor: colores.textoPrincipal,
     paddingBottom: 8,
   },
