@@ -1,77 +1,76 @@
 import { StyleSheet } from 'react-native';
-import { colores } from '../../colores';
+import { colores } from '../../estilos/tema';
 
-// StyleSheet.create() no hace "magia": básicamente valida los estilos y les da un id numérico
-// para que React Native los mande de forma más liviana al puente nativo (mejor rendimiento
-// que mandar objetos sueltos cada vez que se dibuja la pantalla)
+// StyleSheet.create valida los estilos y les da un id interno, para que React Native
+// los mande de forma más liviana al lado nativo que un objeto suelto en cada render
 export default StyleSheet.create({
-  postcard: {
-    marginBottom: 12, // separación entre una publicación y la siguiente
+  contenedor: {
+    marginBottom: 12,
     backgroundColor: colores.fondo,
   },
-  postcardHeader: {
-    flexDirection: 'row', // pone avatar + textos + "···" uno al lado del otro (por defecto es columna)
-    alignItems: 'center', // centra todo verticalmente dentro de la fila
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: 12,
     paddingVertical: 8,
   },
-  postcardAvatar: {
+  avatar: {
     width: 34,
     height: 34,
-    borderRadius: 17, // la mitad del ancho/alto: así el cuadrado se ve como un círculo perfecto
+    borderRadius: 17, // la mitad del ancho: así el cuadrado se ve como un círculo
     marginRight: 10,
-    backgroundColor: colores.superficie, // color de fondo mientras la imagen todavía no cargó
+    backgroundColor: colores.superficie, // se ve mientras la imagen carga
   },
-  postcardHeaderInfo: {
-    flex: 1, // ocupa todo el espacio que sobra en la fila (empuja el "···" al extremo derecho)
+  headerInfo: {
+    flex: 1, // ocupa el espacio que sobra y empuja el "···" al extremo derecho
   },
-  postcardUsuario: {
-    fontWeight: '600', // negrita (los valores van de '100' finito a '900' bien grueso)
+  usuario: {
+    fontWeight: '600',
     fontSize: 13,
     color: colores.textoPrincipal,
   },
-  postcardUbicacion: {
+  ubicacion: {
     fontSize: 11,
     color: colores.textoSecundario,
   },
-  postcardMas: {
+  mas: {
     fontWeight: '700',
     color: colores.textoPrincipal,
   },
-  postcardFoto: {
-    width: '100%', // ocupa todo el ancho disponible de la pantalla
-    aspectRatio: 1, // fuerza que el alto sea igual al ancho (foto cuadrada), sin tener que calcularlo a mano
+  foto: {
+    width: '100%',
+    aspectRatio: 1, // fuerza que el alto sea igual al ancho (foto cuadrada), sin calcularlo a mano
     backgroundColor: colores.superficie,
   },
-  postcardAcciones: {
+  acciones: {
     flexDirection: 'row',
-    justifyContent: 'space-between', // separa el grupo de la izquierda del de la derecha (guardar)
+    justifyContent: 'space-between', // separa el grupo de la izquierda del de guardar
     alignItems: 'center',
     paddingHorizontal: 10,
     paddingVertical: 8,
   },
-  postcardAccionesIzq: {
-    flexDirection: 'row', // like, comentar y compartir uno al lado del otro
+  accionesIzq: {
+    flexDirection: 'row',
   },
   accionBtn: {
-    marginRight: 14, // separación entre cada ícono de acción
+    marginRight: 14,
   },
-  postcardLikes: {
+  likes: {
     fontWeight: '600',
     fontSize: 13,
     color: colores.textoPrincipal,
     paddingHorizontal: 12,
     marginBottom: 2,
   },
-  postcardCaption: {
+  caption: {
     fontSize: 13,
     color: colores.textoPrincipal,
     paddingHorizontal: 12,
     marginBottom: 4,
   },
-  postcardVerComentarios: {
+  verComentarios: {
     fontSize: 13,
-    color: colores.textoSecundario, // más clarito que el resto del texto, como un link secundario
+    color: colores.textoSecundario,
     paddingHorizontal: 12,
     marginBottom: 4,
   },

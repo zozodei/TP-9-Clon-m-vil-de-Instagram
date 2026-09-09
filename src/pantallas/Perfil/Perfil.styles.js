@@ -1,14 +1,21 @@
 import { StyleSheet } from 'react-native';
-import { colores } from '../../colores';
+import { colores, medidas } from '../../estilos/tema';
 
 export default StyleSheet.create({
   contenedor: {
     flex: 1,
     backgroundColor: colores.fondo,
   },
+  // mismo tope de ancho que el Feed, para que en la web la grilla no se estire
+  // a lo ancho del navegador. Ver estilos/tema.js
+  listaContenido: {
+    width: '100%',
+    maxWidth: medidas.anchoMaximoContenido,
+    alignSelf: 'center',
+  },
   tabs: {
     flexDirection: 'row',
-    justifyContent: 'space-around', // reparte las 3 pestañas con espacio parejo
+    justifyContent: 'space-around',
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: colores.borde,
     paddingVertical: 10,
@@ -16,11 +23,11 @@ export default StyleSheet.create({
   },
   tab: {
     fontSize: 11,
-    letterSpacing: 0.5, // un poquito de separación entre letras, como en Instagram real
+    letterSpacing: 0.5,
     color: colores.textoSecundario,
   },
   tabActivo: {
-    color: colores.textoPrincipal, // más oscuro que las pestañas inactivas
+    color: colores.textoPrincipal,
     fontWeight: '700',
     borderBottomWidth: 1, // la rayita de "seleccionado" debajo del texto
     borderBottomColor: colores.textoPrincipal,

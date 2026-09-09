@@ -1,50 +1,42 @@
-// Dimensions: para conocer el ancho/alto de la pantalla del dispositivo
+// Dimensions: para conocer el ancho de la pantalla del dispositivo
 import { Dimensions, FlatList, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { usuarioLogueado } from '../../data/dataDeUsuario';
 import CabeceraPerfil from '../../componentes/CabeceraPerfil';
 import ItemGrilla from '../../componentes/ItemGrilla';
+import { medidas } from '../../estilos/tema';
 import styles from './Perfil.styles';
 
-const COLUMNAS = 3; // la consigna pide exactamente 3 columnas en la grilla del perfil
+const COLUMNAS = 3;
 
-// Dimensions.get('window').width devuelve el ancho de la pantalla en "puntos" (no píxeles físicos).
-// Lo dividimos entre 3 para que cada celda de la grilla mida exactamente un tercio del ancho,
-// así las 3 columnas quedan simétricas y no se desbordan hacia los costados.
-// Esto se calcula UNA vez, cuando se carga el archivo (no se recalcula si el usuario rota el celular,
-// pero acá no es un problema porque la app está fijada en orientación vertical en app.json)
-const tamañoItem = Dimensions.get('window').width / COLUMNAS;
+// cada celda mide un tercio del ancho, así las 3 columnas quedan simétricas.
+// Math.min se queda con el menor valor: el ancho real de la pantalla, o nuestro tope
+// (que en la web evita que las fotos se agranden sin control).
+// Se calcula una sola vez al cargar el archivo, porque la app está fijada en vertical
+const anchoDeLaGrilla = Math.min(Dimensions.get('window').width, medidas.anchoMaximoContenido);
+const tamañoItem = anchoDeLaGrilla / COLUMNAS;
 
-// PerfilPantalla recibe "navigation" (automático de React Navigation) y "posteos" por props.
-// No recibe onToggleLike porque en esta pantalla no se puede dar like directamente,
-// solo se puede tocar una foto para ir al detalle (ahí sí se puede likear)
+// No recibe onToggleLike porque acá no se puede dar like: hay que entrar al detalle
 const PerfilPantalla = ({ navigation, posteos }) => {
   return (
     <SafeAreaView style={styles.contenedor} edges={['top']}>
       <FlatList
         data={posteos}
         keyExtractor={(post) => post.id}
-        // numColumns={3} es lo que hace que FlatList reparta los items en una grilla
-        // de 3 por fila en vez de una lista de una sola columna
-        numColumns={COLUMNAS}
-        // todo lo que va ANTES de la grilla de fotos: la cabecera con el avatar/bio/stats,
-        // y la fila de "pestañas" (Publicaciones / Guardados / Etiquetados)
+        numColumns={COLUMNAS} // esto es lo que convierte la lista en una grilla
+        contentContainerStyle={styles.listaContenido}
         ListHeaderComponent={
           <>
             <CabeceraPerfil usuario={usuarioLogueado} cantidadPosteos={posteos.length} />
             <View style={styles.tabs}>
-              {/* combinamos dos estilos en el mismo Text: el estilo base "tab" + "tabActivo"
-                  encima, para que se vea resaltada (con el subrayado) solo esta pestaña */}
+              {/* el array combina el estilo base con "tabActivo" encima, solo en esta pestaña */}
               <Text style={[styles.tab, styles.tabActivo]}>PUBLICACIONES</Text>
               <Text style={styles.tab}>GUARDADOS</Text>
               <Text style={styles.tab}>ETIQUETADOS</Text>
             </View>
           </>
         }
-        // si todavía no llegaron los posteos, mostramos un texto en vez de una grilla vacía
         ListEmptyComponent={<Text style={styles.vacio}>Todavía no hay publicaciones.</Text>}
-        // por cada posteo dibujamos un ItemGrilla, pasándole el tamaño ya calculado
-        // y una función que navega al detalle (igual que en Feed, mandando solo el id)
         renderItem={({ item }) => (
           <ItemGrilla
             post={item}

@@ -1,25 +1,26 @@
-import { FlatList, Image, Pressable, Text, View } from 'react-native';
+import { useState } from 'react';
+// TextInput: el campo donde se escribe (el equivalente al <input> de HTML)
+import { FlatList, Image, Pressable, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import Comentario from '../../componentes/Comentario';
-import { colores } from '../../colores';
+import { usuarioLogueado } from '../../data/dataDeUsuario';
+import { colores } from '../../estilos/tema';
 import styles from './DetallePost.styles';
 
-// vista ampliada de un posteo (se abre como modal desde Feed o desde Perfil).
-// "route" lo inyecta React Navigation: adentro trae "params", que es el objeto
-// que le mandamos con navigation.navigate('DetallePost', { postId: ... }).
-// "posteos" y "onToggleLike" le llegan por props desde App.js, igual que a Feed.
-const DetallePostPantalla = ({ route, posteos, onToggleLike }) => {
-  // sacamos el postId que viajó como parámetro de navegación
+// la vista ampliada de un posteo, se abre desde el Feed o desde el Perfil.
+// route.params trae el postId que mandamos al navegar.
+const DetallePostPantalla = ({ route, posteos, onToggleLike, onAgregarComentario }) => {
   const { postId } = route.params;
 
-  // buscamos, DENTRO del array actualizado de posteos, el que tiene ese id.
-  // find() devuelve el primer elemento que cumple la condición, o undefined si no hay ninguno.
-  // Buscarlo acá (y no guardar el post recibido "congelado") es lo que hace que, si le diste
-  // like en el feed, acá ya lo veas actualizado (es el mismo estado, no una copia vieja)
-  const post = posteos.find((p) => p.id === postId);
+  // lo que el usuario va escribiendo en el campo de comentario. A esto se le dice
+  // "componente controlado": el texto vive en el estado de React, no en el campo
+  const [textoComentario, setTextoComentario] = useState('');
 
-  // por las dudas el post no exista (por ejemplo, si todavía no cargaron los posteos)
+  // buscamos el posteo por id en el array actualizado, en vez de recibirlo entero al navegar.
+  // Por eso, si le diste like en el feed, acá ya aparece likeado: es el mismo dato, no una copia
+  const post = posteos.find((posteo) => posteo.id === postId);
+
   if (!post) {
     return (
       <SafeAreaView style={styles.centro} edges={['bottom']}>
@@ -28,21 +29,31 @@ const DetallePostPantalla = ({ route, posteos, onToggleLike }) => {
     );
   }
 
+  // .trim() saca los espacios de los costados: si el usuario solo apretó la barra
+  // espaciadora, esto da false y el botón queda apagado
+  const hayTextoEscrito = textoComentario.trim().length > 0;
+
+  function publicarComentario() {
+    if (!hayTextoEscrito) return;
+    // App.js actualiza el array de posteos, eso baja de nuevo por props hasta acá
+    // y la lista se redibuja sola con el comentario nuevo
+    onAgregarComentario(post.id, textoComentario);
+    setTextoComentario(''); // vaciamos el campo
+  }
+
   return (
-    // edges={['bottom']}: acá el header nativo de la pantalla (que pone React Navigation)
-    // ya se encarga de la parte de arriba, así que solo protegemos el borde de abajo
-    <SafeAreaView style={{ flex: 1 }} edges={['bottom']}>
-      {/* usamos FlatList para los COMENTARIOS (no para toda la pantalla), y le metemos
-          la foto, los botones y el caption como "ListHeaderComponent" arriba de todo.
-          Así toda la pantalla (foto + info + comentarios) hace scroll junta y en una sola lista */}
+    // el header de esta pantalla lo pone React Navigation, así que solo protegemos abajo
+    <SafeAreaView style={styles.pantalla} edges={['bottom']}>
+      {/* la FlatList es de los COMENTARIOS: la foto y el caption van como ListHeaderComponent,
+          así toda la pantalla hace scroll junta en una sola lista */}
       <FlatList
+        style={styles.lista}
         data={post.comentarios}
         keyExtractor={(comentario) => String(comentario.id)}
         renderItem={({ item }) => <Comentario comentario={item} />}
         contentContainerStyle={styles.contenedor}
         ListHeaderComponent={
           <View>
-            {/* cabecera: avatar + usuario + ubicación, igual que en PostCard */}
             <View style={styles.header}>
               <Image source={{ uri: post.avatar }} style={styles.avatar} />
               <View style={styles.headerInfo}>
@@ -51,12 +62,9 @@ const DetallePostPantalla = ({ route, posteos, onToggleLike }) => {
               </View>
             </View>
 
-            {/* la foto en grande */}
-            <Image source={{ uri: post.url }} style={styles.foto} />
+            {/* "cover" llena el cuadrado recortando lo que sobra, sin deformar la foto */}
+            <Image source={{ uri: post.url }} style={styles.foto} resizeMode="cover" />
 
-            {/* mismo botón de like que en PostCard: onToggleLike(post.id) actualiza App.js,
-                que a su vez hace que "posteos" cambie, y por eso este componente se vuelve a
-                dibujar con el corazón ya del color correcto y el contador actualizado */}
             <View style={styles.acciones}>
               <View style={styles.accionesIzq}>
                 <Pressable onPress={() => onToggleLike(post.id)} hitSlop={8} style={styles.accionBtn}>
@@ -82,11 +90,34 @@ const DetallePostPantalla = ({ route, posteos, onToggleLike }) => {
               <Text style={styles.usuario}>{post.usuario}</Text> {post.caption}
             </Text>
 
-            {/* título chico antes de que empiecen a listarse los comentarios de abajo */}
-            <Text style={styles.comentariosTitulo}>Comentarios</Text>
+            <Text style={styles.comentariosTitulo}>
+              Comentarios ({post.comentarios.length})
+            </Text>
           </View>
         }
       />
+
+      {/* la barra queda FUERA de la FlatList, así no se mueve al hacer scroll */}
+      <View style={styles.barraComentario}>
+        <Image source={{ uri: usuarioLogueado.fotoPerfil }} style={styles.avatarChico} />
+
+        <TextInput
+          style={styles.input}
+          placeholder="Agregá un comentario..."
+          placeholderTextColor={colores.textoSecundario}
+          value={textoComentario} // el campo muestra lo que hay en el estado
+          onChangeText={setTextoComentario} // y con cada letra el estado se actualiza
+          onSubmitEditing={publicarComentario} // publicar al apretar Enter
+          returnKeyType="send"
+        />
+
+        {/* el array de estilos aplica el segundo encima del primero solo si el campo está vacío */}
+        <Pressable onPress={publicarComentario} disabled={!hayTextoEscrito} hitSlop={8}>
+          <Text style={[styles.botonPublicar, !hayTextoEscrito && styles.botonPublicarApagado]}>
+            Publicar
+          </Text>
+        </Pressable>
+      </View>
     </SafeAreaView>
   );
 };

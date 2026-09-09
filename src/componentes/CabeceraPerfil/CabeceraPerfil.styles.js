@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { colores } from '../../colores';
+import { colores } from '../../estilos/tema';
 
 export default StyleSheet.create({
   contenedor: {
@@ -8,28 +8,28 @@ export default StyleSheet.create({
     paddingBottom: 16,
   },
   filaTop: {
-    flexDirection: 'row', // avatar y stats uno al lado del otro
+    flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 12,
   },
   avatar: {
     width: 80,
     height: 80,
-    borderRadius: 40, // círculo
+    borderRadius: 40, // la mitad del ancho: círculo
     marginRight: 20,
     backgroundColor: colores.superficie,
   },
   stats: {
-    flex: 1, // ocupa todo el espacio que sobra al lado del avatar
+    flex: 1, // ocupa el espacio que sobra al lado del avatar
     flexDirection: 'row',
-    justifyContent: 'space-around', // reparte las 3 métricas con espacio parejo entre ellas
+    justifyContent: 'space-around', // reparte las 3 métricas con espacio parejo
   },
   stat: {
-    alignItems: 'center', // centra el número arriba de la palabra (publicaciones/seguidores/seguidos)
+    alignItems: 'center',
   },
   statNumero: {
     fontSize: 16,
-    fontWeight: '700', // bien grueso, para que resalte el número
+    fontWeight: '700',
     color: colores.textoPrincipal,
   },
   statLabel: {
@@ -45,15 +45,15 @@ export default StyleSheet.create({
   bio: {
     fontSize: 13,
     color: colores.textoPrincipal,
-    lineHeight: 18, // separación entre renglones (importante porque la bio tiene un salto de línea)
+    lineHeight: 18, // separación entre renglones (la bio tiene un salto de línea)
     marginBottom: 12,
   },
   botonEditar: {
     borderWidth: 1,
     borderColor: colores.borde,
-    borderRadius: 8, // bordes redondeados del botón
+    borderRadius: 8,
     paddingVertical: 6,
-    alignItems: 'center', // centra el texto "Editar perfil" adentro del botón
+    alignItems: 'center',
   },
   botonEditarTexto: {
     fontWeight: '600',

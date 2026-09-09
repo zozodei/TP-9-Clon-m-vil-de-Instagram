@@ -1,29 +1,38 @@
 import { StyleSheet } from 'react-native';
-import { colores } from '../../colores';
+import { colores, medidas } from '../../estilos/tema';
+
+// el header y la lista comparten el mismo tope de ancho, para que el logo quede
+// alineado con las fotos. Ver el porqué del tope en estilos/tema.js
+const anchoLimitado = {
+  width: '100%',
+  maxWidth: medidas.anchoMaximoContenido,
+  alignSelf: 'center',
+};
 
 export default StyleSheet.create({
   contenedor: {
-    flex: 1, // ocupa toda la pantalla disponible (sin esto, la lista podría quedar con alto 0)
+    flex: 1, // sin esto la lista quedaría con alto 0
     backgroundColor: colores.fondo,
   },
   centro: {
     flex: 1,
-    justifyContent: 'center', // centra el spinner verticalmente
-    alignItems: 'center', // y horizontalmente
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: colores.fondo,
   },
   header: {
+    ...anchoLimitado,
     flexDirection: 'row',
-    justifyContent: 'space-between', // logo a la izquierda, iconos pegados a la derecha
+    justifyContent: 'space-between', // logo a la izquierda, iconos a la derecha
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 10,
-    borderBottomWidth: StyleSheet.hairlineWidth, // línea finita separando el header del feed
+    borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: colores.borde,
   },
   logo: {
     fontSize: 26,
-    fontStyle: 'italic', // el logo de Instagram real es en cursiva
+    fontStyle: 'italic', // el logo de Instagram es en cursiva
     fontWeight: '700',
     color: colores.textoPrincipal,
   },
@@ -32,6 +41,9 @@ export default StyleSheet.create({
     alignItems: 'center',
   },
   headerIcono: {
-    marginRight: 16, // separación entre el ícono de corazón y el de mensajes
+    marginRight: 16,
   },
+  // va en el "contentContainerStyle" de la FlatList: se aplica al bloque que contiene
+  // todas las filas juntas, no a cada fila por separado
+  listaContenido: anchoLimitado,
 });
