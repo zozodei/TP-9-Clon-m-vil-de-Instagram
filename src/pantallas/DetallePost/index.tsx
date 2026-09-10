@@ -6,11 +6,22 @@ import { Ionicons } from '@expo/vector-icons';
 import Comentario from '../../componentes/Comentario';
 import { usuarioLogueado } from '../../data/dataDeUsuario';
 import { colores } from '../../estilos/tema';
+import type { Post } from '../../tipos';
+import type { PropsDetallePost } from '../../navegacion/tipos';
 import styles from './DetallePost.styles';
+
+// esta pantalla sí lee route.params, así que combinamos lo que le da React Navigation
+// (PropsDetallePost = navigation + route) con lo que le pasamos nosotros.
+// El "&" junta dos tipos en uno: tiene que cumplir los dos a la vez
+type Props = PropsDetallePost & {
+  posteos: Post[];
+  onToggleLike: (id: string) => void;
+  onAgregarComentario: (id: string, texto: string) => void;
+};
 
 // la vista ampliada de un posteo, se abre desde el Feed o desde el Perfil.
 // route.params trae el postId que mandamos al navegar.
-const DetallePostPantalla = ({ route, posteos, onToggleLike, onAgregarComentario }) => {
+const DetallePostPantalla = ({ route, posteos, onToggleLike, onAgregarComentario }: Props) => {
   const { postId } = route.params;
 
   // lo que el usuario va escribiendo en el campo de comentario. A esto se le dice
@@ -33,13 +44,17 @@ const DetallePostPantalla = ({ route, posteos, onToggleLike, onAgregarComentario
   // espaciadora, esto da false y el botón queda apagado
   const hayTextoEscrito = textoComentario.trim().length > 0;
 
-  function publicarComentario() {
+  // va como const y función flecha, y no como "function publicarComentario()", por el
+  // "if (!post)" de arriba: con const, TypeScript sabe que esta función se crea recién
+  // acá abajo, donde post ya existe seguro. Una function declaration se podría llamar
+  // desde antes, así que ahí post seguiría siendo "Post o undefined"
+  const publicarComentario = () => {
     if (!hayTextoEscrito) return;
-    // App.js actualiza el array de posteos, eso baja de nuevo por props hasta acá
+    // App.tsx actualiza el array de posteos, eso baja de nuevo por props hasta acá
     // y la lista se redibuja sola con el comentario nuevo
     onAgregarComentario(post.id, textoComentario);
     setTextoComentario(''); // vaciamos el campo
-  }
+  };
 
   return (
     // el header de esta pantalla lo pone React Navigation, así que solo protegemos abajo

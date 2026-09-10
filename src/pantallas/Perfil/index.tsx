@@ -5,7 +5,14 @@ import { usuarioLogueado } from '../../data/dataDeUsuario';
 import CabeceraPerfil from '../../componentes/CabeceraPerfil';
 import ItemGrilla from '../../componentes/ItemGrilla';
 import { medidas } from '../../estilos/tema';
+import type { Post } from '../../tipos';
+import type { NavegacionDelStack } from '../../navegacion/tipos';
 import styles from './Perfil.styles';
+
+type Props = {
+  navigation: NavegacionDelStack;
+  posteos: Post[];
+};
 
 const COLUMNAS = 3;
 
@@ -17,7 +24,7 @@ const anchoDeLaGrilla = Math.min(Dimensions.get('window').width, medidas.anchoMa
 const tamañoItem = anchoDeLaGrilla / COLUMNAS;
 
 // No recibe onToggleLike porque acá no se puede dar like: hay que entrar al detalle
-const PerfilPantalla = ({ navigation, posteos }) => {
+const PerfilPantalla = ({ navigation, posteos }: Props) => {
   return (
     <SafeAreaView style={styles.contenedor} edges={['top']}>
       <FlatList

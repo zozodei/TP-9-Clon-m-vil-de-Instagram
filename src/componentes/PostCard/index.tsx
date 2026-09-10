@@ -4,14 +4,23 @@
 import { Image, Pressable, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { colores } from '../../estilos/tema';
+import type { Post } from '../../tipos';
 import styles from './PostCard.styles';
+
+// "() => void" es el tipo de una función que no recibe nada y no devuelve nada:
+// justo lo que necesitamos para avisar "el usuario tocó esto"
+type Props = {
+  post: Post;
+  onAbrirDetalle: () => void;
+  onToggleLike: () => void;
+};
 
 // una publicación del feed. Es un componente de presentación: no tiene estado propio,
 // todo le llega por props. Recibe el posteo y dos funciones que le pasa el Feed para
 // avisarle cuándo el usuario quiere abrir el detalle o dar like.
 // Se llama "onAbrirDetalle" (y no "onClickImagen") porque no la usa solo la imagen:
 // el ícono de comentario y "Ver los N comentarios" hacen lo mismo.
-const PostCard = ({ post, onAbrirDetalle, onToggleLike }) => {
+const PostCard = ({ post, onAbrirDetalle, onToggleLike }: Props) => {
   return (
     <View style={styles.contenedor}>
 
@@ -65,7 +74,7 @@ const PostCard = ({ post, onAbrirDetalle, onToggleLike }) => {
         <Text style={styles.usuario}>{post.usuario}</Text> {post.caption}
       </Text>
 
-      {/* el número se actualiza solo: al comentar cambia el array en App.js y esto se redibuja */}
+      {/* el número se actualiza solo: al comentar cambia el array en App.tsx y esto se redibuja */}
       <Pressable onPress={onAbrirDetalle}>
         <Text style={styles.verComentarios}>
           Ver los {post.comentarios.length} comentarios

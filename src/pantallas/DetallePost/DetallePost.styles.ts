@@ -1,9 +1,10 @@
 import { StyleSheet } from 'react-native';
+import type { ViewStyle } from 'react-native';
 import { colores, medidas } from '../../estilos/tema';
 
 // el mismo tope de ancho que usa el Feed, para que la publicación y la barra de
-// comentario queden alineadas. Ver el porqué del tope en estilos/tema.js
-const anchoLimitado = {
+// comentario queden alineadas. Ver el porqué del tope en estilos/tema.ts
+const anchoLimitado: ViewStyle = {
   width: '100%',
   maxWidth: medidas.anchoMaximoContenido,
   alignSelf: 'center',
@@ -113,7 +114,7 @@ export default StyleSheet.create({
     fontSize: 13,
     color: colores.textoPrincipal,
     paddingVertical: 6,
-    outlineStyle: 'none', // saca el recuadro azul del navegador al hacer foco (en el celular se ignora)
+    outlineWidth: 0, // saca el recuadro azul del navegador al hacer foco (en el celular se ignora)
   },
   botonPublicar: {
     fontWeight: '600',

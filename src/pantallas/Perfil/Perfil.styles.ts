@@ -7,7 +7,7 @@ export default StyleSheet.create({
     backgroundColor: colores.fondo,
   },
   // mismo tope de ancho que el Feed, para que en la web la grilla no se estire
-  // a lo ancho del navegador. Ver estilos/tema.js
+  // a lo ancho del navegador. Ver estilos/tema.ts
   listaContenido: {
     width: '100%',
     maxWidth: medidas.anchoMaximoContenido,

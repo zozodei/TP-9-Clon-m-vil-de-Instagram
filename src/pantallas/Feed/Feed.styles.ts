@@ -1,9 +1,14 @@
 import { StyleSheet } from 'react-native';
+import type { ViewStyle } from 'react-native';
 import { colores, medidas } from '../../estilos/tema';
 
 // el header y la lista comparten el mismo tope de ancho, para que el logo quede
-// alineado con las fotos. Ver el porqué del tope en estilos/tema.js
-const anchoLimitado = {
+// alineado con las fotos. Ver el porqué del tope en estilos/tema.ts
+//
+// El ": ViewStyle" hace falta porque este objeto está suelto, fuera de StyleSheet.create():
+// sin él, TypeScript vería '100%' y 'center' como texto cualquiera, y no como los
+// valores concretos que acepta un estilo de React Native
+const anchoLimitado: ViewStyle = {
   width: '100%',
   maxWidth: medidas.anchoMaximoContenido,
   alignSelf: 'center',

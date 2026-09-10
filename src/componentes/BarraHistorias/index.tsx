@@ -1,11 +1,17 @@
 import { FlatList, Image, Pressable, Text, View } from 'react-native';
 import { usuarioLogueado, historias } from '../../data/dataDeUsuario';
+import type { HistoriaParaVer } from '../../tipos';
 import styles from './BarraHistorias.styles';
 
-// la tira de historias arriba del feed. Los datos los importa directo de dataDeUsuario.js
+// recibe la historia tocada como parámetro, para que el Feed sepa cuál abrir
+type Props = {
+  onAbrirHistoria: (historia: HistoriaParaVer) => void;
+};
+
+// la tira de historias arriba del feed. Los datos los importa directo de dataDeUsuario.ts
 // porque son fijos. Solo recibe "onAbrirHistoria": este componente avisa qué historia
 // tocaron, y el Feed es el que decide navegar al visor.
-const BarraHistorias = ({ onAbrirHistoria }) => {
+const BarraHistorias = ({ onAbrirHistoria }: Props) => {
   return (
     <FlatList
       style={styles.barra}

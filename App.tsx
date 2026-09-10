@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 // axios: para hacer pedidos HTTP, más simple que el fetch nativo
 import axios from 'axios';
 import { StatusBar } from 'expo-status-bar';
@@ -9,77 +9,70 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import NavegadorRaiz from './src/navegacion/NavegadorRaiz';
 import { usuarioLogueado } from './src/data/dataDeUsuario';
+// los datos inventados (autores y comentarios) viven en src/data, así este archivo
+// se queda solo con la lógica
+import { AUTORES, COMENTARIOS_INICIALES } from './src/data/datosDePosteos';
+// "import type" trae solo las formas de los datos. Como los tipos no existen cuando
+// la app corre, esta línea desaparece del código final: no pesa nada
+import type { ImagenDeLaApi, Post } from './src/tipos';
 
 // le decimos a Expo "no ocultes la pantalla de carga sola, yo te aviso cuándo"
 SplashScreen.preventAutoHideAsync();
 
-// la API de gatos solo devuelve la imagen, así que el resto de cada posteo (usuario,
-// ubicación, caption) lo armamos combinando estos arrays por índice
-const CAPTIONS = [
-  'Cuando es lunes pero igual estás feliz 😸',
-  'El sol me llama pero el sueño me retiene 😴',
-  'Listo para conquistar el mundo 🐾',
-  'Nadie me entiende como mi almohada 💤',
-  'Día perfecto para no hacer nada 🌿',
-  'Estoy en modo zen 🧘',
-  'Juzgándote en silencio desde aquí 👀',
-  'Detective en servicio activo 🔍',
-  'Cuando encontrás el rayo de sol perfecto ☀️',
-  'Solo paso por aquí a ser hermoso 🌟',
-  'No me interrumpas, estoy ocupado 💅',
-  'El universo me debe una siesta 😤',
-];
-
-const USUARIOS = [
-  'michi_lover', 'gato_curioso', 'pelusa_oficial', 'felix_jr',
-  'bigotes_pro', 'ronroneo_max', 'zarpazo_suave', 'michi_zen',
-  'gatito_bueno', 'patas_lindas', 'colita_tiesa', 'miau_forever',
-];
-
-const UBICACIONES = [
-  'Buenos Aires, Argentina', 'Córdoba, Argentina', 'Rosario, Argentina',
-  'Mendoza, Argentina', 'Bariloche, Argentina', 'Mar del Plata, Argentina',
-  'Salta, Argentina', 'La Plata, Argentina', 'Ushuaia, Argentina',
-  'Neuquén, Argentina', 'Tucumán, Argentina', 'Posadas, Argentina',
-];
-
-// los comentarios con los que arranca cada posteo
-const COMENTARIOS_FIJOS = [
-  { id: 1, usuario: 'gato_fan_01', texto: '¡Qué hermoso! 😍' },
-  { id: 2, usuario: 'luna_cat', texto: 'Me robaste el corazón 🐾' },
-  { id: 3, usuario: 'michi_watcher', texto: 'Definitivamente el mejor día' },
-];
-
-// el componente raíz: acá vive TODO el estado de la app. Las pantallas no guardan
+// ─────────────────────────────────────────────────────────────────────────────
+// El componente raíz. Acá vive TODO el estado de la app: las pantallas no guardan
 // posteos por su cuenta, los reciben por props junto con las funciones que los modifican.
+//
+// El recorrido de los datos es siempre este:
+//
+//   App.js  (tiene "posteos" + toggleLike + agregarComentario)
+//     └─> NavegadorRaiz      (los recibe y los reparte)
+//           ├─> TabsPrincipales ──> Feed    ──> PostCard
+//           │                   └─> Perfil  ──> ItemGrilla
+//           └─> DetallePost
+//
+// Los datos BAJAN por props (posteos) y los avisos SUBEN por funciones
+// (onToggleLike, onAgregarComentario). Como hay un solo array de posteos,
+// si das like en el Feed también aparece likeado en el Detalle: es el mismo dato.
+// ─────────────────────────────────────────────────────────────────────────────
 export default function App() {
-  const [posteos, setPosteos] = useState([]);
+  // <Post[]> le dice a useState "esto va a ser un array de Post". Sin eso, al arrancar
+  // vacío TypeScript creería que es un array de nada y se quejaría al llenarlo
+  const [posteos, setPosteos] = useState<Post[]>([]);
 
   // el array vacío del final significa "ejecutá esto una sola vez, al arrancar la app"
   useEffect(() => {
     async function traerGatos() {
       // try/catch: si falla (sin internet, API caída) no rompe la app
       try {
-        const respuesta = await axios.get('https://api.thecatapi.com/v1/images/search', {
-          params: { limit: 12 }, // se agrega a la URL como ...search?limit=12
+        // el <ImagenDeLaApi[]> le avisa a axios qué forma tiene lo que va a devolver,
+        // así respuesta.data queda tipado y no es un "any" suelto
+        const respuesta = await axios.get<ImagenDeLaApi[]>('https://api.thecatapi.com/v1/images/search', {
+          // pedimos tantas fotos como autores inventados tenemos (12),
+          // así a cada foto le toca un autor distinto
+          params: { limit: AUTORES.length }, // se agrega a la URL como ...search?limit=12
         });
 
         // por cada imagen que devuelve la API armamos un posteo completo.
-        // "index" es la posición, la usamos para repartir usuario/ubicación/caption
-        const posteosGenerados = respuesta.data.map((imagen, index) => ({
-          id: imagen.id,
-          url: imagen.url,
-          avatar: `https://i.pravatar.cc/150?img=${index + 1}`,
-          // el % (módulo) hace que, si nos quedamos sin nombres, vuelva a empezar del principio
-          usuario: USUARIOS[index % USUARIOS.length],
-          ubicacion: UBICACIONES[index % UBICACIONES.length],
-          caption: CAPTIONS[index % CAPTIONS.length],
-          likes: Math.floor(Math.random() * 500) + 50, // un entero al azar entre 50 y 549
-          liked: false,
-          // una copia propia para cada posteo: si compartieran el mismo array,
-          // al comentar en uno aparecería el comentario en los 12
-          comentarios: [...COMENTARIOS_FIJOS],
-        }));
+        // "index" es la posición (0, 1, 2...): con ella agarramos el autor de esa misma
+        // posición, y así la foto 0 queda con michi_lover, la foto 1 con gato_curioso, etc.
+        const posteosGenerados: Post[] = respuesta.data.map((imagen, index) => {
+          const autor = AUTORES[index];
+
+          return {
+            id: imagen.id,
+            url: imagen.url,
+            avatar: `https://i.pravatar.cc/150?img=${index + 1}`,
+            usuario: autor.usuario,
+            ubicacion: autor.ubicacion,
+            caption: autor.caption,
+            likes: Math.floor(Math.random() * 500) + 50, // un entero al azar entre 50 y 549
+            liked: false,
+            // una copia propia para cada posteo: si compartieran el mismo array,
+            // al comentar en uno aparecería el comentario en los 12
+            comentarios: [...COMENTARIOS_INICIALES],
+          };
+        });
 
         setPosteos(posteosGenerados); // acá se dibuja el feed con las fotos ya cargadas
       } catch (error) {
@@ -90,8 +83,9 @@ export default function App() {
     traerGatos();
   }, []);
 
-  // da o saca el like del posteo con ese id
-  function toggleLike(id) {
+  // da o saca el like del posteo con ese id.
+  // ": string" es el tipo del parámetro, ": void" avisa que no devuelve nada
+  function toggleLike(id: string): void {
     // cuando le pasamos una función, setPosteos nos da el estado actual y toma
     // lo que devolvemos como el estado nuevo
     setPosteos((posteosActuales) =>
@@ -112,7 +106,7 @@ export default function App() {
   // Vive acá y no en DetallePost por el mismo motivo que toggleLike: "posteos" es el único
   // lugar donde viven los datos, así el cambio se ve en todas las pantallas a la vez
   // (por ejemplo, el "Ver los N comentarios" del Feed se actualiza solo)
-  function agregarComentario(id, texto) {
+  function agregarComentario(id: string, texto: string): void {
     const textoLimpio = texto.trim(); // sin los espacios de los costados
     if (textoLimpio === '') return;
 
@@ -133,14 +127,10 @@ export default function App() {
     );
   }
 
-  // useCallback la memoriza para que sea siempre la misma función entre renders
-  const ocultarSplash = useCallback(async () => {
-    await SplashScreen.hideAsync();
-  }, []);
-
   return (
-    // onLayout se dispara en cuanto este View mide su tamaño, o sea, cuando ya está listo
-    <GestureHandlerRootView style={{ flex: 1 }} onLayout={ocultarSplash}>
+    // onLayout se dispara en cuanto este View mide su tamaño, o sea, cuando la app
+    // ya está lista: recién ahí escondemos la pantalla de carga
+    <GestureHandlerRootView style={{ flex: 1 }} onLayout={() => SplashScreen.hideAsync()}>
       <SafeAreaProvider>
         {/* "dark" pone los iconitos de la barra de estado en oscuro, porque el fondo es blanco */}
         <StatusBar style="dark" />

@@ -7,11 +7,21 @@ import { Ionicons } from '@expo/vector-icons';
 import PostCard from '../../componentes/PostCard';
 import BarraHistorias from '../../componentes/BarraHistorias';
 import { colores } from '../../estilos/tema';
+import type { Post } from '../../tipos';
+import type { NavegacionDelStack } from '../../navegacion/tipos';
 import styles from './Feed.styles';
 
+// "navigation" lo inyecta React Navigation; "posteos" y "onToggleLike" se los pasamos
+// nosotros desde TabsPrincipales
+type Props = {
+  navigation: NavegacionDelStack;
+  posteos: Post[];
+  onToggleLike: (id: string) => void;
+};
+
 // la pantalla principal. No tiene estado propio: los posteos y las funciones que los
-// modifican le llegan por props desde App.js. "navigation" lo inyecta React Navigation.
-const FeedPantalla = ({ navigation, posteos, onToggleLike }) => {
+// modifican le llegan por props desde App.tsx.
+const FeedPantalla = ({ navigation, posteos, onToggleLike }: Props) => {
 
   // mientras el array siga vacío, la API todavía no respondió: mostramos el spinner
   if (posteos.length === 0) {
@@ -49,7 +59,7 @@ const FeedPantalla = ({ navigation, posteos, onToggleLike }) => {
           <PostCard
             post={item}
             // mandamos solo el id, no el objeto: así el detalle siempre lee la versión
-            // más actualizada del posteo desde App.js
+            // más actualizada del posteo desde App.tsx
             onAbrirDetalle={() => navigation.navigate('DetallePost', { postId: item.id })}
             onToggleLike={() => onToggleLike(item.id)}
           />

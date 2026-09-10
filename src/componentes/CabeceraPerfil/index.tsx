@@ -1,9 +1,15 @@
 import { Image, Pressable, Text, View } from 'react-native';
+import type { Usuario } from '../../tipos';
 import styles from './CabeceraPerfil.styles';
+
+type Props = {
+  usuario: Usuario;
+  cantidadPosteos: number;
+};
 
 // avatar, métricas y biografía del perfil.
 // "cantidadPosteos" llega ya calculada desde afuera (posteos.length), para no repetir la cuenta acá
-const CabeceraPerfil = ({ usuario, cantidadPosteos }) => {
+const CabeceraPerfil = ({ usuario, cantidadPosteos }: Props) => {
   return (
     <View style={styles.contenedor}>
 

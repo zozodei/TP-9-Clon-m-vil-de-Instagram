@@ -1,15 +1,16 @@
+import type { Historia, Usuario } from '../tipos';
 
-export const usuarioLogueado = {
+export const usuarioLogueado: Usuario = {
   usuario: 'flecha_michis',
   nombre: 'Flecha Michis 🐾',
-  fotoPerfil: 'https://cdn2.thecatapi.com/images/MTY3ODIyMQ.jpg', 
+  fotoPerfil: 'https://cdn2.thecatapi.com/images/MTY3ODIyMQ.jpg',
   biografia: '🐾 Amante de los gatitos | Fotógrafo felino\nBuenos Aires, Argentina 🇦🇷',
   seguidores: 847,
   seguidos: 123,
 };
 
 // array de historias que se muestran arriba del feed en la BarraHistorias
-export const historias = [
+export const historias: Historia[] = [
   { id: 1, fotoPerfil: 'https://loremflickr.com/600/600/kitten?lock=101', usuario: 'ManunuGatito1' },
   { id: 2, fotoPerfil: 'https://loremflickr.com/600/600/kitten?lock=102', usuario: 'ZoeeFotos_Gatitos' },
   { id: 3, fotoPerfil: 'https://loremflickr.com/600/600/kitten?lock=103', usuario: 'Michi_Nao1' },
@@ -18,5 +19,3 @@ export const historias = [
   { id: 6, fotoPerfil: 'https://loremflickr.com/600/600/kitten?lock=106', usuario: 'Fran_Gatito' },
   { id: 7, fotoPerfil: 'https://loremflickr.com/600/600/kitten?lock=107', usuario: 'Mariana.Lopez3' },
 ];
-
-//okk

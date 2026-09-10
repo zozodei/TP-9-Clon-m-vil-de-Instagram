@@ -1,11 +1,13 @@
 import { Image, Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import type { PropsVisorHistoria } from '../../navegacion/tipos';
 import styles from './VisorHistoria.styles';
 
 // una historia en grande. route.params trae la historia que tocamos en la BarraHistorias,
 // y navigation.goBack() cierra esta pantalla y vuelve al Feed.
-const VisorHistoriaPantalla = ({ route, navigation }) => {
+// No recibe props nuestras: le alcanza con lo que le da React Navigation
+const VisorHistoriaPantalla = ({ route, navigation }: PropsVisorHistoria) => {
   const { historia } = route.params;
 
   return (
