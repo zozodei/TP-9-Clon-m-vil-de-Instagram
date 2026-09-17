@@ -21,7 +21,7 @@ disponible.
 Para revisar que no haya errores de tipos (sin llegar a abrir la app):
 
 ```bash
-npm run tsc
+npm run typecheck
 ```
 
 ## Diseño de referencia (Figma)
