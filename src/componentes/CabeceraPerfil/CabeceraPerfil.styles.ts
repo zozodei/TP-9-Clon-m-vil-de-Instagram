@@ -1,8 +1,4 @@
-// ╔════════════════════════════════════════════════════════════════════════════╗
-// ║  CabeceraPerfil.styles.ts  —  LOS ESTILOS DE LA CABECERA DEL PERFIL         ║
-// ╚════════════════════════════════════════════════════════════════════════════╝
-//
-// (La explicación general de flexbox y estilos está en PostCard.styles.ts)
+
 
 import { StyleSheet } from 'react-native';
 import { colores } from '../../estilos/tema';
@@ -14,8 +10,6 @@ export default StyleSheet.create({
     paddingTop: 12,
     paddingBottom: 16,
   },
-
-  // La fila de arriba: la foto grande a la izquierda y los 3 números a la derecha.
   filaTop: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -30,18 +24,13 @@ export default StyleSheet.create({
     backgroundColor: colores.superficie, // gris mientras la foto carga
   },
 
-  // El bloque de las tres métricas.
   stats: {
-    flex: 1,              // agarra todo el espacio que queda al lado del avatar
-    flexDirection: 'row', // las tres métricas, una al lado de la otra
-    // space-around reparte el espacio sobrante a los costados de cada una, así
-    // quedan distribuidas parejo sin que yo calcule márgenes.
+    flex: 1,             
+    flexDirection: 'row', 
     justifyContent: 'space-around',
   },
 
-  // Cada métrica por separado: el número arriba y la palabra abajo.
-  // No necesita flexDirection porque la dirección por defecto en React Native ya
-  // es en columna (de arriba hacia abajo), al revés que en la web.
+
   stat: {
     alignItems: 'center', // centra el número respecto de la palabra
   },
@@ -67,9 +56,6 @@ export default StyleSheet.create({
   bio: {
     fontSize: 13,
     color: colores.textoPrincipal,
-    // lineHeight es la separación entre renglones. Lo necesito porque la
-    // biografía tiene un salto de línea (el \n de dataDeUsuario.ts) y sin esto
-    // los dos renglones quedan pegoteados.
     lineHeight: 18,
     marginBottom: 12,
   },
