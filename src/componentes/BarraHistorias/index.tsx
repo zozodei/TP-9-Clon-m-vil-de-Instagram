@@ -1,95 +1,56 @@
-// ╔════════════════════════════════════════════════════════════════════════════╗
-// ║  componentes/BarraHistorias  —  LA TIRA DE HISTORIAS DE ARRIBA              ║
-// ╚════════════════════════════════════════════════════════════════════════════╝
-//
-// ¿QUÉ ES ESTE ARCHIVO?
-// La fila de circulitos que está arriba del feed y se desplaza de costado.
-// Primero va "Tu historia" (con el borde gris) y después las de los demás
-// (con el borde rojo, la señal de "no vista" de Instagram).
-//
-// DOS COSAS PARA DESTACAR EN LA EXPOSICIÓN:
-//
-// 1) Los datos los importa directo de dataDeUsuario.ts, sin recibirlos por
-//    props. Me lo puedo permitir porque las historias son fijas: no cambian
-//    nunca, nadie las modifica. Los posteos SÍ cambian (likes, comentarios) y
-//    por eso esos sí viajan por props desde App.tsx. La regla es: si el dato
-//    cambia, pasalo por props; si es una constante, importalo y listo.
-//
-// 2) Este componente NO NAVEGA. Solo avisa "tocaron esta historia" y el Feed
-//    decide qué hacer. A eso se le dice "delegar": el componente hijo reporta
-//    el evento, el padre decide la consecuencia. Así puedo reutilizar esta barra
-//    en otra pantalla que haga otra cosa al tocar una historia.
+// La fila de historias de arriba del feed (el StoriesBar de la versión web).
+// Primero va "Tu historia" y después las demás. Al tocar una, avisa al Feed
+// con onAbrirHistoria y el Feed se encarga de abrirla. Este componente no
+// navega: solo avisa qué historia se tocó.
 
 import { FlatList, Image, Pressable, Text, View } from 'react-native';
-import { usuarioLogueado, historias } from '../../data/dataDeUsuario';
-import type { HistoriaParaVer } from '../../tipos';
+import { historias, usuarioLogueado } from '../../data/dataDeUsuario';
+import type { Historia } from '../../tipos';
 import styles from './BarraHistorias.styles';
 
-// La función que recibo lleva un parámetro: la historia que tocaron.
-// Así el Feed sabe CUÁL abrir, sin que yo tenga que navegar desde acá.
+// Props = lo que este componente recibe de su padre (el Feed).
 type Props = {
-  onAbrirHistoria: (historia: HistoriaParaVer) => void;
+  onAbrirHistoria: (historia: Historia) => void;
+};
+
+// Mi historia la armo con los datos del usuario logueado (no está en la lista de historias).
+const miHistoria: Historia = {
+  id: 0,
+  fotoPerfil: usuarioLogueado.fotoPerfil,
+  usuario: usuarioLogueado.usuario,
 };
 
 const BarraHistorias = ({ onAbrirHistoria }: Props) => {
   return (
+    // FlatList con "horizontal": la fila se desliza de costado.
     <FlatList
-      style={styles.barra}
-      data={historias}
-
-      // Esta sola palabra da vuelta la lista: en vez de scrollear hacia abajo,
-      // scrollea de izquierda a derecha.
       horizontal
-
-      showsHorizontalScrollIndicator={false} // sin la barrita de scroll
-
-      // keyExtractor tiene que devolver TEXTO sí o sí, y el id de las historias
-      // es un número. Por eso lo convierto con String().
+      showsHorizontalScrollIndicator={false} // oculta la barrita de scroll
+      style={styles.barra}
+      data={historias}                        // la lista que se va a mostrar
+      // keyExtractor da una clave única a cada item (como el key del .map en la web).
+      // Tiene que ser texto, por eso String().
       keyExtractor={(historia) => String(historia.id)}
-
-      // ── "TU HISTORIA" ─────────────────────────────────────────────────────
-      // ListHeaderComponent va antes de todos los items de la lista. Lo uso para
-      // mi propia historia, que no está en el array "historias" sino que la armo
-      // acá en el momento con los datos del usuario logueado.
-      //
-      // Fijate que construyo un objeto con la misma forma que espera el visor
-      // (fotoPerfil y usuario): por eso existe el tipo HistoriaParaVer, que pide
-      // solo esos dos campos y no el id, que acá no tengo. Está explicado en
-      // src/tipos.ts.
+      // ListHeaderComponent va antes de todas: acá pongo mi historia.
       ListHeaderComponent={
-        <Pressable
-          style={styles.item}
-          onPress={() =>
-            onAbrirHistoria({
-              fotoPerfil: usuarioLogueado.fotoPerfil,
-              usuario: usuarioLogueado.usuario,
-            })
-          }
-        >
-          {/* Array de estilos: el círculo base, y encima "anilloTuya" que le
-              pisa el color del borde y lo deja gris en vez de rojo. Es la forma
-              de decir visualmente "esta es la tuya, no una historia nueva". */}
+        // Pressable = algo que se puede tocar (como un onClick en la web).
+        // Va con flecha () => ... para que se ejecute al tocar y no al dibujar.
+        <Pressable style={styles.item} onPress={() => onAbrirHistoria(miHistoria)}>
+          {/* Array de estilos: el de la derecha pisa al de la izquierda.
+              anilloTuya cambia el borde rojo por uno gris. */}
           <View style={[styles.anillo, styles.anilloTuya]}>
-            <Image source={{ uri: usuarioLogueado.fotoPerfil }} style={styles.foto} />
+            <Image source={{ uri: miHistoria.fotoPerfil }} style={styles.foto} />
           </View>
           <Text style={styles.nombre}>Tu historia</Text>
         </Pressable>
       }
-
-      // ── LAS HISTORIAS DE LOS DEMÁS ────────────────────────────────────────
+      // renderItem dibuja cada historia; item es la historia de esa posición.
       renderItem={({ item }) => (
-        // ⚠️ OJO CON ESTO, es un error clásico:
-        // Va () => onAbrirHistoria(item), con la flecha. Si escribiera
-        // onPress={onAbrirHistoria(item)} sin la flecha, la función se
-        // EJECUTARÍA en el momento de dibujar la lista, no al tocarla: se
-        // abrirían las 7 historias solas apenas carga la pantalla.
-        // Con la flecha guardo la función para después.
         <Pressable style={styles.item} onPress={() => onAbrirHistoria(item)}>
           <View style={styles.anillo}>
             <Image source={{ uri: item.fotoPerfil }} style={styles.foto} />
           </View>
-          {/* numberOfLines={1} corta los nombres largos con puntos suspensivos,
-              para que no rompan el ancho fijo de 64px de cada circulito. */}
+          {/* numberOfLines={1} corta los nombres largos con "..." */}
           <Text style={styles.nombre} numberOfLines={1}>{item.usuario}</Text>
         </Pressable>
       )}
